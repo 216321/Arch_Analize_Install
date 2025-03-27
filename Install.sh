@@ -12,7 +12,7 @@ lsblk
 echo -n "Enter the drive you wish to install on: "
 read drive
 
-# Handle if drive is a nvme or not
+# Handle if drive is an nvme or not
 if [[ "$drive" == *"nvme"* ]]; then
   partition1="${drive}p1"
   partition2="${drive}p2"
@@ -22,7 +22,7 @@ else
 fi
 
 # Start partitioning
-
+parted $drive --script 'mklabel gpt mkpart "EFI system partition" fat32 1MiB 1025MiB set 1 esp on mkpart "crypt_root" fat32 1025MiB 100% type 2 4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709'
 
 
 
