@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+216321 add the firewall option there is only a snipit here
+
+
 # Zero out the variables the script will use.
 drive=0
 partition1=0
@@ -11,6 +14,7 @@ tpm=0
 vbox=0
 sysop=0
 non-sudo=0
+firewall=0
 
 # Check for internet.
 ping -c 1 example.com || { echo "Please connect to the internet and wait for the repo test to complete before running."; exit 1; }
@@ -108,10 +112,25 @@ echo -e "\n[sublime-text]\nServer = https://download.sublimetext.com/arch/stable
 # Resync with repos
 pacman -Sy
 
+# Start off the beggining of the file for the seccond stage within chroot.
+echo "#!/usr/bin/env bash" > /mnt/stage2.sh
+echo "drive=${drive}" >> /mnt/stage2.sh
+echo "partition1=${partition1}" >> /mnt/stage2.sh
+echo "partition2=${partition2}" >> /mnt/stage2.sh
+echo "luks=${luks}" >> /mnt/stage2.sh
+echo "lukspasswd=${lukspasswd}" >> /mnt/stage2.sh
+echo "lukspart=${lukspart}" >> /mnt/stage2.sh
+echo "tpm=${tpm}" >> /mnt/stage2.sh
+echo "vbox=${vbox}" >> /mnt/stage2.sh
+echo "sysop=${sysop}" >> /mnt/stage2.sh
+echo "non-sudo=${non-sudo}" >> /mnt/stage2.sh
+echo "$firewall=${firewall}" >> /mnt/stage2.sh
+chmod +x /mnt/stage2.sh
+
 # Begin the install.
 if [ "$vbox" == 1 ] && [ "$luks" == 1 ] && [ "$tpm" == 1 ]; then
 
 fi
 
-# Tack on during chroot
+# Tack on during chroot for vm.
 #echo "GSK_RENDERER=gl" >> /etc/environment
