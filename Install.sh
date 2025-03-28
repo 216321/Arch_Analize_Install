@@ -3,9 +3,6 @@
 echo "This script is not finished please refrain from using it"
 exit 1
 
-216321 add the firewall option there is only a snipit here
-
-
 # Zero out the variables the script will use.
 drive=0
 partition1=0
@@ -31,6 +28,17 @@ elif [[ "$tpm" == "y" ]]; then
   vbox="1"
 else
   vbox="0"
+fi
+
+# Prompt for host based firewall with default deny rule.
+ehco -n "Do you want nftables installed with a default deny in rule? (y/N) "
+reead -n 1 firewall
+if [[ "$firewall" == "Y" ]]; then
+  firewall="1"
+elif [[ "$firewall" == "y" ]]; then
+  firewall="1"
+else
+  firewall="0"
 fi
 
 # Prompt user for the drive.
@@ -131,9 +139,9 @@ echo "$firewall=${firewall}" >> /mnt/stage2.sh
 chmod +x /mnt/stage2.sh
 
 # Begin the install.
-#if [ "$vbox" == 1 ] && [ "$luks" == 1 ] && [ "$tpm" == 1 ]; then
-#
-#fi
+if [ "$vbox" == "1" ] && [ "$firewall" == "1" ] && [ "$luks" == "1" ] && [ "$tpm" == "1" ]; then
+
+fi
 
 # Tack on during chroot for vm.
 #echo "GSK_RENDERER=gl" >> /etc/environment
