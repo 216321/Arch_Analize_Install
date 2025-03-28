@@ -141,6 +141,8 @@ chmod +x /mnt/stage2.sh
 # Begin the install.
 if [ "$vbox" == "1" ] && [ "$firewall" == "1" ] && [ "$luks" == "1" ] && [ "$tpm" == "1" ]; then
 
+elif [ ""
+
 fi
 
 # Tack on during chroot for vm.
