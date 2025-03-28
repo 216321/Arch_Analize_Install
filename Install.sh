@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+echo "This script is not finished please refrain from using it"
+exit 1
+
 216321 add the firewall option there is only a snipit here
 
 
@@ -128,9 +131,9 @@ echo "$firewall=${firewall}" >> /mnt/stage2.sh
 chmod +x /mnt/stage2.sh
 
 # Begin the install.
-if [ "$vbox" == 1 ] && [ "$luks" == 1 ] && [ "$tpm" == 1 ]; then
-
-fi
+#if [ "$vbox" == 1 ] && [ "$luks" == 1 ] && [ "$tpm" == 1 ]; then
+#
+#fi
 
 # Tack on during chroot for vm.
 #echo "GSK_RENDERER=gl" >> /etc/environment
