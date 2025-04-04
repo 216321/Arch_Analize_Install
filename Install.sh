@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "This script is not finished please refrain from using it"
+echo "This script is not finished please refrain from using it."
 exit 1
 
 # Zero out the variables the script will use.
@@ -178,6 +178,8 @@ echo "gnome-keyring" >> ./install_list.txt
 echo "nm-connection-editor" >> ./install_list.txt
 echo "sublime-text" >> ./install_list.txt
 echo "cinnamon" >> ./install_list.txt
+echo "git" >> ./install_list.txt
+echo "base-devel" >> ./install_list.txt
 if [ "$vbox" == "1" ]; then
   echo "virtual-box-guest-utils" >> ./install_list.txt
 fi
