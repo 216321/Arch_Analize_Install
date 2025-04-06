@@ -155,12 +155,28 @@ echo "lukspart=${lukspart}" >> /mnt/stage2.sh
 echo "tpm=${tpm}" >> /mnt/stage2.sh
 echo "vbox=${vbox}" >> /mnt/stage2.sh
 echo "sysop=${sysop}" >> /mnt/stage2.sh
-echo "non-sudo=${non-sudo}" >> /mnt/stage2.sh
+echo "non_sudo=${non_sudo}" >> /mnt/stage2.sh
 echo "firewall=${firewall}" >> /mnt/stage2.sh
 echo "hostname=${hostname}" >> /mnt/stage2.sh
 echo "locale_string=${locale_string}" >> /mnt/stage2.sh
 echo "ln -sf /usr/share/zoneinfo/UTC /etc/localtime" >> /mnt/stage2.sh
-echo "sed -i 's/#\${locale_string}'/\${locale_string" >> /mnt/stage2.sh
+echo "hwclock --systohc" >> /mnt/stage2.sh
+echo "sed -i 's/#\${locale_string}'/\${locale_string}" >> /mnt/stage2.sh
+echo "locale-gen" >> /mnt/stage2.sh
+echo "echo 'LANG=\${locale_string}' >> /etc/locale.conf" >> /mnt/stage2.sh
+echo "echo 'reverse_system' >> /etc/hostname" >> /mnt/stage2.sh
+echo "useradd -m sysop" >> /mnt/stage2.sh
+echo "useradd -m non_sudo" >> /mnt/stage2.sh
+echo "usermod -aG wheel sysop" >> /mnt/stage2.sh
+echo "echo '\${sysop}' | passwd --stdin sysop" >> /mnt/stage2.sh
+echo "echo '\${non_sudo}' | passwd --stdin non_sudo" >> /mnt/stage2.sh
+echo "systemctl enable NetworkManager.service" >> /mnt/stage2.sh
+echo "if [[ \$vbox == '1' ]]; then" >> /mnt/stage2.sh
+echo "  systemctl enable vboxservice.service" >> /mnt/stage2.sh
+echo "fi" >> /mnt/stage2.sh
+echo "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB" >> /mnt/stage2.sh
+echo "mkinitcpio -P" >> /mnt/stage2.sh
+echo "grub-mkconfig -o /boot/grub.cfg" >> /mnt/stage2.sh
 chmod +x /mnt/stage2.sh
 
 # Begin setup of the install list.
@@ -194,7 +210,8 @@ cat ./install_list.txt | tr '\n' ' ' > ./install_list.new.txt && rm ./install_li
 
 # Begin install
 pacstrap -K /mnt $(echo $(cat ./install_list.txt))
-genfstab -U /mnt/etc/fstab
-
+genfstab -U /mnt >> /mnt/etc/fstab
+arch-chroot /mnt ./stage2.sh
+reboot
 # Tack on during chroot for vm.
 #echo "GSK_RENDERER=gl" >> /etc/environment
