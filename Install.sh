@@ -161,18 +161,18 @@ echo "hostname=${hostname}" >> /mnt/stage2.sh
 echo "locale_string=${locale_string}" >> /mnt/stage2.sh
 echo "ln -sf /usr/share/zoneinfo/UTC /etc/localtime" >> /mnt/stage2.sh
 echo "hwclock --systohc" >> /mnt/stage2.sh
-echo 'sed -i "s/#\${locale_string}/\${locale_string}" "/etc/locale.gen' >> /mnt/stage2.sh
+echo "sed -i \"s/#\${locale_string}/\${locale_string}/\" \"/etc/locale.gen\"" >> /mnt/stage2.sh
 echo "locale-gen" >> /mnt/stage2.sh
-echo 'echo "LANG=\${locale_string}" >> /etc/locale.conf' >> /mnt/stage2.sh
-echo 'echo "\${hostname}" >> /etc/hostname' >> /mnt/stage2.sh
+echo "echo \"LANG=\${locale_string}\" >> /etc/locale.conf" >> /mnt/stage2.sh
+echo "echo \"\${hostname}\" >> /etc/hostname" >> /mnt/stage2.sh
 echo "useradd -m sysop" >> /mnt/stage2.sh
 echo "useradd -m non_sudo" >> /mnt/stage2.sh
 echo "usermod -aG wheel sysop" >> /mnt/stage2.sh
-echo 'echo "\${sysop}" | passwd --stdin sysop' >> /mnt/stage2.sh
-echo 'echo "\${non_sudo}" | passwd --stdin non_sudo' >> /mnt/stage2.sh
+echo "echo \"\${sysop}\" | passwd --stdin sysop" >> /mnt/stage2.sh
+echo "echo \"\${non_sudo}\" | passwd --stdin non_sudo" >> /mnt/stage2.sh
 echo "systemctl enable NetworkManager.service" >> /mnt/stage2.sh
 # Sudo stuff
-echo "echo '%wheel  ALL=(ALL:ALL) ALL' >> /etc/sudoers"
+echo "echo '%wheel  ALL=(ALL:ALL) ALL' >> /etc/sudoers" >> /mnt/stage2.sh
 # VM check based on previous input
 echo "if [[ \$vbox == '1' ]]; then" >> /mnt/stage2.sh
 echo "  systemctl enable vboxservice.service" >> /mnt/stage2.sh
@@ -201,7 +201,7 @@ echo "cinnamon" >> ./install_list.txt
 echo "git" >> ./install_list.txt
 echo "base-devel" >> ./install_list.txt
 if [ "$vbox" == "1" ]; then
-  echo "virtual-box-guest-utils" >> ./install_list.txt
+  echo "virtualbox-guest-utils" >> ./install_list.txt
 fi
 if [ "$tpm" == "1" ]; then
   echo "clevis" >> ./install_list.txt
