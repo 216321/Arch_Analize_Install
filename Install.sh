@@ -159,28 +159,63 @@ echo "non_sudo=${non_sudo}" >> /mnt/stage2.sh
 echo "firewall=${firewall}" >> /mnt/stage2.sh
 echo "hostname=${hostname}" >> /mnt/stage2.sh
 echo "locale_string=${locale_string}" >> /mnt/stage2.sh
-echo "ln -sf /usr/share/zoneinfo/UTC /etc/localtime" >> /mnt/stage2.sh
-echo "hwclock --systohc" >> /mnt/stage2.sh
-echo "sed -i \"s/#\${locale_string}/\${locale_string}/\" \"/etc/locale.gen\"" >> /mnt/stage2.sh
-echo "locale-gen" >> /mnt/stage2.sh
-echo "echo \"LANG=\${locale_string}\" >> /etc/locale.conf" >> /mnt/stage2.sh
-echo "echo \"\${hostname}\" >> /etc/hostname" >> /mnt/stage2.sh
-echo "useradd -m sysop" >> /mnt/stage2.sh
-echo "useradd -m non_sudo" >> /mnt/stage2.sh
-echo "usermod -aG wheel sysop" >> /mnt/stage2.sh
-echo "echo \"\${sysop}\" | passwd --stdin sysop" >> /mnt/stage2.sh
-echo "echo \"\${non_sudo}\" | passwd --stdin non_sudo" >> /mnt/stage2.sh
-echo "systemctl enable NetworkManager.service" >> /mnt/stage2.sh
+cat >> /mnt/stage2.sh << 'PLEASEGODENDTHISRECURSION'
+ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+hwclock --systohc
+sed -i "s/#${locale_string}/${locale_string}/" "/etc/locale.gen"
+locale-gen
+echo "LANG=${locale_string}" > /etc/locale.conf
+echo "${hostname}" >> /etc/hostname
+useradd -m sysop
+useradd -m non_sudo
+usermod -aG wheel sysop
+echo "${sysop}" | passwd --stdin sysop
+echo "${non_sudo}" | passwd --stdin non_sudo
+systemctl enable NetworkManager.service
 # Sudo stuff
-echo "echo '%wheel  ALL=(ALL:ALL) ALL' >> /etc/sudoers" >> /mnt/stage2.sh
-# VM check based on previous input
-echo "if [[ \$vbox == '1' ]]; then" >> /mnt/stage2.sh
-echo "  systemctl enable vboxservice.service" >> /mnt/stage2.sh
-echo "fi" >> /mnt/stage2.sh
+echo '%wheel  ALL=(ALL:ALL) ALL' >> /etc/sudoers
+# VM check based on previous inputs
+if [[ $vbox == '1' ]]; then
+  systemctl enable vboxservice.service
+  echo "GSK_RENDERER=gl" >> /etc/environment
+fi
 # Grub install
-echo "grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB" >> /mnt/stage2.sh
-echo "mkinitcpio -P" >> /mnt/stage2.sh
-echo "grub-mkconfig -o /boot/grub/grub.cfg" >> /mnt/stage2.sh
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
+mkinitcpio -P
+grub-mkconfig -o /boot/grub/grub.cfg
+# Build the final stage
+echo "#!/usr/bin/env bash" > /home/sysop/finish_install.sh
+echo "drive=${drive}" >> /home/sysop/finish_install.sh
+echo "firewall=${firewall}" >> /home/sysop/finish_install.sh
+echo "partition1=${partition1}" >> /home/sysop/finish_install.sh
+echo "partition2=${partition2}" >> /home/sysop/finish_install.sh
+echo "luks=${luks}" >> /home/sysop/finish_install.sh
+echo "lukspasswd=${lukspasswd}" >> /home/sysop/finish_install.sh
+echo "lukspart=${lukspart}" >> /home/sysop/finish_install.sh
+echo "tpm=${tpm}" >> /home/sysop/finish_install.sh
+echo "vbox=${vbox}" >> /home/sysop/finish_install.sh
+echo "sysop=${sysop}" >> /home/sysop/finish_install.sh
+echo "non_sudo=${non_sudo}" >> /home/sysop/finish_install.sh
+echo "firewall=${firewall}" >> /home/sysop/finish_install.sh
+echo "hostname=${hostname}" >> /home/sysop/finish_install.sh
+echo "locale_string=${locale_string}" >> /home/sysop/finish_install.sh
+cat >> /home/sysop/finish_install.sh << 'EOF'
+if [[ $(whoami) == "root" ]]; then
+  echo "Please refrain from running this script with sudo, the script will handle sudo on its own."
+  exit 1
+fi
+ping -c 1 example.com || { echo "Please connect to the internet before running."; exit 1; }
+sudo echo ""
+mkdir ./from_source
+cd ./from_source
+git clone https://aur.archlinux.org/yay.git
+cd ./yay
+makepkg -si
+yay -S web-greeter shikai-theme
+EOF
+chmod +x /home/sysop/finish_install.sh
+chown sysop /home/sysop/finish_install.sh
+PLEASEGODENDTHISRECURSION
 chmod +x /mnt/stage2.sh
 
 # Begin setup of the install list.
