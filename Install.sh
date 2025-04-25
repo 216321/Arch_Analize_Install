@@ -101,7 +101,7 @@ else
   luks="0"
 fi
 
-# Handle if drive is an nvme or not
+# Handle if drive is an nvme or not and set partition varibles.
 if [[ "$drive" == *"nvme"* ]]; then
   partition1="${drive}p1"
   partition2="${drive}p2"
@@ -213,8 +213,8 @@ cd ./yay
 makepkg -si
 yay -S web-greeter shikai-theme
 EOF
-chmod +x /home/sysop/finish_install.sh
 chown sysop /home/sysop/finish_install.sh
+chmod +x /home/sysop/finish_install.sh
 PLEASEGODENDTHISRECURSION
 chmod +x /mnt/stage2.sh
 
