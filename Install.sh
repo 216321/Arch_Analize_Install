@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash -e
 
 echo "This script is not finished please refrain from using it."
 exit 1
